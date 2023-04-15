@@ -58,3 +58,9 @@ dkms.conf
 /api/ProductManager/ProductManager/bin/Debug/net6.0
 /api/SalesPersonManager/SalesPersonManager/obj/Debug/net6.0
 /api/SalesPersonManager/SalesPersonManager/bin/Debug/net6.0
+/api/CustomerManager/CustomerManager/bin/Debug/net6.0
+/api/CustomerManager/CustomerManager/obj/Debug/net6.0
+/api/DiscountManager/DiscountManager/bin/Debug/net6.0
+/api/DiscountManager/DiscountManager/obj/Debug/net6.0
+/api/SalesManager/SalesManager/bin/Debug/net6.0
+/api/SalesManager/SalesManager/obj/Debug/net6.0
