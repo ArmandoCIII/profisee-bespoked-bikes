@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Sales Person Commission</title>
+</head>
+<body>
+    <h1>Sales Person Commission Report</h1>
+    <div>
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName"><br><br>
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName"><br><br>
+        <button onclick="getSalesPersonCommission()">Get Commission</button>
+    </div>
+    <div>
+        <p>Total Sales Person Commission: <span id="salesPersonCommission"></span></p>
+    </div>
+    <script>
+        function getSalesPersonCommission() {
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            fetch('https://localhost:7068/api/Sales/SalesPerson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ firstName: firstName, lastName: lastName })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("salesPersonCommission").innerText = data;
+            })
+            .catch(error => console.error(error));
+        }
+    </script>
+</body>
+</html>
