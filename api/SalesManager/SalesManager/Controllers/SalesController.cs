@@ -32,7 +32,6 @@ namespace SalesManager.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateSales(Sales newSales)
         {
-            //TODO: Careful to add LastName for sort key
             var sales = await _dynamoDBContext.LoadAsync<Sales>(newSales.Product);
             if (sales != null) return BadRequest($"Sales Already Exists");
             await _dynamoDBContext.SaveAsync(newSales);
@@ -41,7 +40,6 @@ namespace SalesManager.Controllers
         [HttpPut]
         public async Task<IActionResult> UpdateSales(Sales newSales)
         {
-            //TODO: Careful to add LastName for sort key
             var sales = await _dynamoDBContext.LoadAsync<Sales>(newSales.Product);
             if (sales == null) return BadRequest($"Sales Does Not Exist");
             await _dynamoDBContext.SaveAsync(newSales);
@@ -50,7 +48,9 @@ namespace SalesManager.Controllers
         [HttpPost("dateRange")]
         public async Task<IActionResult> FilterDateRange([FromBody] DateRangeRequest body)
         {
-
+            /*Idealy I would be able to make some sort of comparison here as I tried to do in the FilterExpression.
+            Unfortunately I kept running into a scalar error that I would need to figure out. I would then create some form of this method
+            and place it in a class to be able to use in both FilterDate Range and SalesPersonCommissionReport.*/
             var startDate = new DateTime(body.StartDate.Year, body.StartDate.Month, body.StartDate.Day, 0, 0, 0, DateTimeKind.Utc);
             var endDate = new DateTime(body.EndDate.Year, body.EndDate.Month, body.EndDate.Day, 23, 59, 59, DateTimeKind.Utc);
 
@@ -105,11 +105,14 @@ namespace SalesManager.Controllers
                 }
 
             };
+            
+            //Would include some sort of quarterly fitler for the Items returned.
 
 
             var response = await _dynamoDBClient.ScanAsync(request);
             var sales = response.Items.Select(item => _dynamoDBContext.FromDocument<Sales>(Document.FromAttributeMap(item)));
-            return Ok(sales);
+            var salesPersonCommissionSum = sales.Sum(s => s.SalesPersonCommission);
+            return Ok(salesPersonCommissionSum);
         }
 
         public class DateRangeRequest
