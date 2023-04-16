@@ -1,10 +1,31 @@
 <!DOCTYPE html>
 <html>
-<body>
+    <body>
+        <h1>Welcome to my web page</h1>
+        <button id="Customers">Customers</button>
+        <button id="SalesPersons">SalesPersons</button>
+        <button id="Products">Products</button>
+        <button id="Sales">Sales</button>
+        <script>
+          var customerNavigationButton = document.getElementById("Customers");
+          customerNavigationButton.addEventListener("click", function() {
+            window.location.href = "webpages/customers-page.html";
+          });
 
-<h1>My First Heading</h1>
+          var salesPersonNavigationButton = document.getElementById("SalesPersons");
+          salesPersonNavigationButton.addEventListener("click", function() {
+            window.location.href = "webpages/salespersons-page.html";
+          });
 
-<p>My first paragraph.</p>
+          var productsNavigationButton = document.getElementById("Products");
+          productsNavigationButton.addEventListener("click", function() {
+            window.location.href = "webpages/products-page.html";
+          });
 
-</body>
+          var salesNavigationButton = document.getElementById("Sales");
+          salesNavigationButton.addEventListener("click", function() {
+            window.location.href = "sales-page.html";
+          });
+        </script>
+    </body>
 </html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create SalesPerson</title>
+    <style>
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            display: block;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create SalesPerson</h1>
+    <form id="create-salesPerson-form">
+        <label for="firstName">First Name:</label>
+        <input type="text" id="firstName" name="firstName"><br>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName"><br>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address"><br>
+
+        <label for="manager">Manager:</label>
+        <input type="text" id="manager" name="manager"><br>
+
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone"><br>
+
+        <label for="endDay">End Day:</label>
+        <input type="text" id="endDay" name="endDay"><br>
+
+        <label for="endMonth">End Month:</label>
+        <input type="text" id="endMonth" name="endMonth"><br>
+
+        <label for="endYear">End Year:</label>
+        <input type="text" id="endYear" name="endYear"><br>
+
+        <input type="submit" value="Create">
+    </form>
+    <div id="error-message" class="error"></div>
+    <pre id="json-output"></pre>
+
+    <script>
+        const form = document.querySelector('#create-sales-form');
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const body = {
+                firstName: formData.get('firstName'),
+                lastName: formData.get('lastName'),
+                address: formData.get('address'),
+                manager: formData.get('manager'),
+                phone: formData.get('phone'),
+                startDate: {
+                  day: new Date().getDate(),
+                  month: new Date().getMonth() + 1,
+                  year: new Date().getFullYear(),
+                },
+                terminationDate: {
+                  day: formData.get('endDay'),
+                  month: formData.get('endMonth') + 1,
+                  year: formData.get('endYear'),
+                  time: {
+                    hours: new Date().getHours(),
+                    minutes: new Date().getMinutes(),
+                    seconds: new Date().getSeconds()
+                  }
+                }
+            };
+
+            fetch('https://localhost:7068/api/SalesPerson', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.opener.location.reload();
+                    window.close();
+                } else {
+                    return response.json();
+                }
+            })
+            .then(error => {
+                if (error) {
+                    const errorMessage = document.querySelector('#error-message');
+                    errorMessage.textContent = error;
+                }
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>

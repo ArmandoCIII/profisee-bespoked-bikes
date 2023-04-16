@@ -1,0 +1,90 @@
+<!DOCTYPE html>Productcustomer
+<html>
+<head>
+	<title>Sales</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border-bottom: 1px solid #ddd;
+		}
+		
+		tr:hover {
+			background-color: #f5f5f5;
+		}
+		
+		.scrollable-table {
+			height: 300px;
+			overflow-y: scroll;
+		}
+	</style>
+</head>
+<body>
+    <div>
+        <button id="create-sales-btn">Create Sales</button>
+        <button id="filter-date-range-btn">Filtered</button>
+        <button id="quarterly-salesperson-btn">Sales Person Quarterly Report</button>
+        <button id="create-discount-btn">Create Discount</button>
+    </div>
+	<div class="scrollable-table">
+		<table id="sales-table">
+			<thead>
+				<tr>
+					<th>Product</th>
+					<th>Customer</th>
+                    <th>Sales Person</th>
+					<th>Sales Date (dd-mm-yyyy hh::mm::ss)</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+        const createSalesBtn = document.querySelector('#create-sales-btn');
+        createSalesBtn.addEventListener('click', () => {
+            window.open('popups/create-sales.html', 'Create Sales', 'width=500,height=500');
+        });
+
+        const filterDateRangeBtn = document.querySelector('#filter-date-range-btn');
+        filterDateRangeBtn.addEventListener('click', () => {
+            window.open('popups/update-sales.html', 'Filter Date Range', 'width=500,height=500');
+        });
+
+        const qSalesPersonBtn = document.querySelector('#quarterly-salesperson-btn');
+        qSalesPersonBtn.addEventListener('click', () => {
+            window.open('popups/quarterly-report.html', 'Quarterly Report', 'width=500,height=500');
+        });
+
+        const createDiscountBtn = document.querySelector('#create-discount-btn');
+        createDiscountBtn.addEventListener('click', () => {
+            window.open('popups/create-discount.html', 'Create discount', 'width=500,height=500');
+        });
+
+		fetch('https://localhost:7068/api/Sales')
+			.then(response => response.json())
+			.then(data => {
+				const tableBody = document.querySelector('#sales-table tbody');
+				data.forEach(sales => {
+                    const salesDate = sales.salesDate ? `${sales.salesDate.day}-${sales.salesDate.month}-${sales.salesDate.year} ${sales.salesDate.time.hours}::${sales.salesDate.time.minutes}::${sales.salesDate.time.seconds}` : '';
+                    // const salesPerson = sales.salesPerson ? `${sales.salesperson.firstName} ${sales.salesperson.lastName}` : '';
+					const row = document.createElement('tr');
+					row.innerHTML = `
+						<td>${sales.product}</td>
+						<td>${sales.customer.firstName} ${sales.customer.lastName}</td>
+						<td>${sales.salesPerson.firstName} ${sales.salesPerson.lastName}</td>
+						<td>${salesDate}</td>
+					`;
+					tableBody.appendChild(row);
+				});
+			})
+			.catch(error => console.error(error));
+	</script>
+</body>
+</html>

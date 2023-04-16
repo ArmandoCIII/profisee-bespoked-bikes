@@ -15,6 +15,7 @@ namespace ProductManager.Controllers
             _dynamoDBContext = dynamoDBContext;
         }
         [HttpGet]
+        [ActionName("get")]
         public async Task<IActionResult> GetAllProducts()
         {
             var products = await _dynamoDBContext.ScanAsync<Products>(default).GetRemainingAsync();
@@ -25,16 +26,16 @@ namespace ProductManager.Controllers
         {
             var product = await _dynamoDBContext.LoadAsync<Products>(newProduct.Name);
             if (product != null) return BadRequest($"Product Already Exists");
-            await _dynamoDBContext.SaveAsync(product);
-            return Ok(product);
+            await _dynamoDBContext.SaveAsync(newProduct);
+            return Ok(newProduct);
         }
         [HttpPut]
         public async Task<IActionResult> UpdateProduct(Products newProduct)
         {
             var product = await _dynamoDBContext.LoadAsync<Products>(newProduct.Name);
             if (product == null) return BadRequest($"Product Does Not Exist");
-            await _dynamoDBContext.SaveAsync(product);
-            return Ok(product);
+            await _dynamoDBContext.SaveAsync(newProduct);
+            return Ok(newProduct);
         }
     }
 }

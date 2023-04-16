@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Discount</title>
+    <style>
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            display: block;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Discount</h1>
+    <form id="create-discount-form">
+        <label for="product">Product:</label>
+        <input type="text" id="product" name="product"><br>
+
+        <label for="discountPercentage">Discount Percentage:</label>
+        <input type="text" id="discountPercentage" name="discountPercentage"><br>
+
+        <label for="endDay">End Day:</label>
+        <input type="text" id="endDay" name="endDay"><br>
+
+        <label for="endMonth">End Month:</label>
+        <input type="text" id="endMonth" name="endMonth"><br>
+
+        <label for="endYear">End Year:</label>
+        <input type="text" id="endYear" name="endYear"><br>
+
+        <input type="submit" value="Create">
+    </form>
+    <div id="error-message" class="error"></div>
+    <pre id="json-output"></pre>
+
+    <script>
+        const form = document.querySelector('#create-sales-form');
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const body = {
+                product: formData.get('product'),
+                discountPercentage: formData.get('discountPercentage'),
+                beginDate: {
+                  day: new Date().getDate(),
+                  month: new Date().getMonth() + 1,
+                  year: new Date().getFullYear(),
+                  time: {
+                    hours: new Date().getHours(),
+                    minutes: new Date().getMinutes(),
+                    seconds: new Date().getSeconds()
+                  }
+                },
+                endDate: {
+                  day: formData.get('endDay'),
+                  month: formData.get('endMonth') + 1,
+                  year: formData.get('endYear'),
+                  time: {
+                    hours: new Date().getHours(),
+                    minutes: new Date().getMinutes(),
+                    seconds: new Date().getSeconds()
+                  }
+                }
+            };
+
+            fetch('https://localhost:7068/api/Discount', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.opener.location.reload();
+                    window.close();
+                } else {
+                    return response.json();
+                }
+            })
+            .then(error => {
+                if (error) {
+                    const errorMessage = document.querySelector('#error-message');
+                    errorMessage.textContent = error;
+                }
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>

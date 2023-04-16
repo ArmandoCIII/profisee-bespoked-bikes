@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Products</title>
+	<style>
+		table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		
+		th, td {
+			text-align: left;
+			padding: 8px;
+			border-bottom: 1px solid #ddd;
+		}
+		
+		tr:hover {
+			background-color: #f5f5f5;
+		}
+		
+		.scrollable-table {
+			height: 300px;
+			overflow-y: scroll;
+		}
+	</style>
+</head>
+<body>
+    <div>
+        <button id="create-product-btn">Create Product</button>
+        <button id="update-product-btn">Update Product</button>
+    </div>
+	<div class="scrollable-table">
+		<table id="products-table">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Manufacturer</th>
+					<th>Style</th>
+					<th>Purchase Price</th>
+					<th>Sale Price</th>
+					<th>Qty On Hand</th>
+					<th>Commission Percentage</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+		</table>
+	</div>
+
+	<script>
+        const createProductBtn = document.querySelector('#create-product-btn');
+        createProductBtn.addEventListener('click', () => {
+            window.open('popups/create-product.html', 'Create Product', 'width=500,height=500');
+        });
+
+        const updateProductBtn = document.querySelector('#update-product-btn');
+        updateProductBtn.addEventListener('click', () => {
+            window.open('popups/update-product.html', 'Update Product', 'width=500,height=500');
+        });
+
+		fetch('https://localhost:7298/api/Products')
+			.then(response => response.json())
+			.then(data => {
+				const tableBody = document.querySelector('#products-table tbody');
+				data.forEach(product => {
+					const row = document.createElement('tr');
+					row.innerHTML = `
+						<td>${product.name}</td>
+						<td>${product.manufacturer}</td>
+						<td>${product.style}</td>
+						<td>${product.purchasePrice}</td>
+						<td>${product.salePrice}</td>
+						<td>${product.qtyOnHand}</td>
+						<td>${product.commissionPercentage || ''}</td>
+					`;
+					tableBody.appendChild(row);
+				});
+			})
+			.catch(error => console.error(error));
+	</script>
+</body>
+</html>

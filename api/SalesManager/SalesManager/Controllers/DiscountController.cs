@@ -1,9 +1,9 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Http;
-using DiscountManager.Models;
 using Microsoft.AspNetCore.Mvc;
+using SalesManager.Models;
 
-namespace DiscountManager.Controllers
+namespace SalesManager.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]

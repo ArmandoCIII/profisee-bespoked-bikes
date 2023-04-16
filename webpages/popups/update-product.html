@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Product</title>
+    <style>
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            display: block;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Product</h1>
+    <form id="update-product-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name"><br>
+
+        <label for="manufacturer">Manufacturer:</label>
+        <input type="text" id="manufacturer" name="manufacturer"><br>
+
+        <label for="style">Style:</label>
+        <input type="text" id="style" name="style"><br>
+
+        <label for="purchase-price">Purchase Price:</label>
+        <input type="text" id="purchase-price" name="purchasePrice"><br>
+
+        <label for="sale-price">Sale Price:</label>
+        <input type="text" id="sale-price" name="salePrice"><br>
+
+        <label for="qty-on-hand">Qty On Hand:</label>
+        <input type="text" id="qty-on-hand" name="qtyOnHand"><br>
+
+        <label for="commission-percentage">Commission Percentage:</label>
+        <input type="text" id="commission-percentage" name="commissionPercentage"><br>
+
+        <input type="submit" value="update">
+    </form>
+    <div id="error-message" class="error"></div>
+
+    <script>
+        const form = document.querySelector('#update-product-form');
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const body = {
+                name: formData.get('name'),
+                manufacturer: formData.get('manufacturer'),
+                style: formData.get('style'),
+                purchasePrice: parseFloat(formData.get('purchasePrice')),
+                salePrice: parseFloat(formData.get('salePrice')),
+                qtyOnHand: parseInt(formData.get('qtyOnHand')),
+                commissionPercentage: parseFloat(formData.get('commissionPercentage'))
+            };
+
+            fetch('https://localhost:7298/api/Products', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.opener.location.reload();
+                    window.close();
+                } else {
+                    return response.json();
+                }
+            })
+            .then(error => {
+                if (error) {
+                    const errorMessage = document.querySelector('#error-message');
+                    errorMessage.textContent = error;
+                }
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>

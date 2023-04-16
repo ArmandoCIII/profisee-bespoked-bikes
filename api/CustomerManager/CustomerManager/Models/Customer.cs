@@ -12,7 +12,7 @@ namespace CustomerManager.Models
         [DynamoDBProperty("Address")]
         public string? Address { get; set; }
         [DynamoDBProperty("Phone")]
-        public int? Phone { get; set; }
+        public long? Phone { get; set; }
         [DynamoDBProperty("StartDate")]
         public DateMap? StartDate { get; set; }
     }

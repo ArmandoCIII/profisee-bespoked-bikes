@@ -16,5 +16,7 @@ namespace ProductManager.Models
         public double? SalePrice { get; set; }
         [DynamoDBProperty("QtyOnHand")]
         public int? QtyOnHand { get; set; }
+        [DynamoDBProperty("CommissionPercentage")]
+        public int? CommissionPercentage { get; set; }
     }
 }

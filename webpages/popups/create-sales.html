@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Sale</title>
+    <style>
+        label {
+            display: inline-block;
+            width: 100px;
+            margin-bottom: 10px;
+        }
+        input[type="text"] {
+            width: 300px;
+            margin-bottom: 10px;
+        }
+        input[type="submit"] {
+            display: block;
+            margin-top: 20px;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Create Sale</h1>
+    <form id="create-sales-form">
+        <label for="product">Product:</label>
+        <input type="text" id="product" name="product"><br>
+
+        <label for="customerFirstName">Customer First Name:</label>
+        <input type="text" id="customerFirstName" name="customerFirstName"><br>
+
+        <label for="customerLastName">Customer Last Name:</label>
+        <input type="text" id="customerLastName" name="customerLastName"><br>
+
+        <label for="salesPersonFirstName">Sales Person First Name:</label>
+        <input type="text" id="salesPersonFirstName" name="salesPersonFirstName"><br>
+
+        <label for="salesPersonLastName">Sales Person Last Name:</label>
+        <input type="text" id="salesPersonLastName" name="salesPersonLastName"><br>
+
+        <input type="submit" value="Create">
+    </form>
+    <div id="error-message" class="error"></div>
+    <pre id="json-output"></pre>
+
+    <script>
+        const form = document.querySelector('#create-sales-form');
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+
+            const formData = new FormData(form);
+            const body = {
+                product: formData.get('product'),
+                customer: {
+                  firstName: formData.get('customerFirstName'),
+                  lastName: formData.get('customerLastName')
+                },
+                salesPerson: {
+                  firstName: formData.get('salesPersonFirstName'),
+                  lastName: formData.get('salesPersonLastName')
+                },
+                salesDate: {
+                  day: new Date().getDate(),
+                  month: new Date().getMonth() + 1,
+                  year: new Date().getFullYear(),
+                  time: {
+                    hours: new Date().getHours(),
+                    minutes: new Date().getMinutes(),
+                    seconds: new Date().getSeconds()
+                  }
+                }
+            };
+
+            fetch('https://localhost:7068/api/Sales', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.opener.location.reload();
+                    window.close();
+                } else {
+                    return response.json();
+                }
+            })
+            .then(error => {
+                if (error) {
+                    const errorMessage = document.querySelector('#error-message');
+                    errorMessage.textContent = error;
+                }
+            })
+            .catch(error => console.error(error));
+        });
+    </script>
+</body>
+</html>

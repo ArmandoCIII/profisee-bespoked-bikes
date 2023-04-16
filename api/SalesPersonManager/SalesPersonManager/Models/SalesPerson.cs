@@ -13,7 +13,7 @@ namespace SalesPersonManager.Models
         [DynamoDBProperty("Manager")]
         public string? Manager { get; set; }
         [DynamoDBProperty("Phone")]
-        public int? Phone { get; set; }
+        public long? Phone { get; set; }
         [DynamoDBProperty("StartDate")]
         public DateMap? StartDate { get; set; }
         [DynamoDBProperty("TerminationDate")]
