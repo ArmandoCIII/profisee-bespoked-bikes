@@ -13,6 +13,10 @@ namespace SalesManager.Models
         public SalesPerson? SalesPerson { get; set; }
         [DynamoDBProperty("SalesDate")]
         public DateMap? SalesDate { get; set; }
+        [DynamoDBProperty("SalesPersonCommission")]
+        public float? SalesPersonCommission { get; set; }
+        [DynamoDBProperty("Price")]
+        public float? Price { get; set; }
     }
 
     public class Customer

@@ -40,6 +40,12 @@
         <label for="salesPersonLastName">Sales Person Last Name:</label>
         <input type="text" id="salesPersonLastName" name="salesPersonLastName"><br>
 
+        <label for="salesPersonCommission">Sales Person Commission Percentage:</label>
+        <input type="text" id="salesPersonCommission" name="salesPersonCommission"><br>
+
+        <label for="price">Price:</label>
+        <input type="text" id="price" name="price"><br>
+
         <input type="submit" value="Create">
     </form>
     <div id="error-message" class="error"></div>
@@ -70,7 +76,9 @@
                     minutes: new Date().getMinutes(),
                     seconds: new Date().getSeconds()
                   }
-                }
+                },
+                salesPersonCommission: formData.get('salesPersonCommission'),
+                price: formData.get('price'),
             };
 
             fetch('https://localhost:7068/api/Sales', {

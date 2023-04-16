@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2;
+using Amazon.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,6 @@ var awsOptions = builder.Configuration.GetAWSOptions();
 builder.Services.AddDefaultAWSOptions(awsOptions);
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddScoped<IDynamoDBContext, DynamoDBContext>();
-/*builder.Services.AddSingleton<IAmazonDynamoDB>(new AmazonDynamoDBClient(awsOptions.Region));*/
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

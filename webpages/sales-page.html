@@ -39,6 +39,8 @@
 					<th>Customer</th>
                     <th>Sales Person</th>
 					<th>Sales Date (dd-mm-yyyy hh::mm::ss)</th>
+					<th>Sales Person Commission</th>
+					<th>Price</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -80,6 +82,8 @@
 						<td>${sales.customer.firstName} ${sales.customer.lastName}</td>
 						<td>${sales.salesPerson.firstName} ${sales.salesPerson.lastName}</td>
 						<td>${salesDate}</td>
+						<td>${sales.salesPersonCommission}</td>
+						<td>${sales.price}</td>
 					`;
 					tableBody.appendChild(row);
 				});

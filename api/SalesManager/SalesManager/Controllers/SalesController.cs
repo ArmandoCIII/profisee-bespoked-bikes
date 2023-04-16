@@ -7,6 +7,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using System.Runtime.CompilerServices;
 using Microsoft.Extensions.Options;
+using Amazon.Runtime;
 
 namespace SalesManager.Controllers
 {
@@ -18,8 +19,9 @@ namespace SalesManager.Controllers
         private readonly AmazonDynamoDBClient _dynamoDBClient;
         public SalesController(IDynamoDBContext dynamoDBContext, IOptions<AmazonDynamoDBConfig> options)
         {
+            var credentials = new StoredProfileAWSCredentials("bespoked-bikes-webapi-dynamodb");
             _dynamoDBContext = dynamoDBContext;
-            _dynamoDBClient = new AmazonDynamoDBClient(options.Value);
+            _dynamoDBClient = new AmazonDynamoDBClient(credentials, Amazon.RegionEndpoint.USEast1);
         }
         [HttpGet]
         public async Task<IActionResult> GetAllSales()
@@ -48,59 +50,33 @@ namespace SalesManager.Controllers
         [HttpPost("dateRange")]
         public async Task<IActionResult> FilterDateRange([FromBody] DateRangeRequest body)
         {
-            /*int startDayDate = body.StartDate.Day;
-            int startMonthDate = body.StartDate.Month;
-            int startYearDate = body.StartDate.Year;
-            int endDayDate = body.EndDate.Day;
-            int endMonthDate = body.EndDate.Month;
-            int endYearDate = body.EndDate.Year;*/
 
+            var startDate = new DateTime(body.StartDate.Year, body.StartDate.Month, body.StartDate.Day, 0, 0, 0, DateTimeKind.Utc);
+            var endDate = new DateTime(body.EndDate.Year, body.EndDate.Month, body.EndDate.Day, 23, 59, 59, DateTimeKind.Utc);
 
-            /*var startDate = new DateMap
-            {
-                Day = startDayDate,
-                Month = startMonthDate,
-                Year = startYearDate,
-                Time = new TimeMap
-                {
-                    Hours = 00,
-                    Minutes = 00,
-                    Seconds = 00
-                }
-            };
-
-            var endDate = new DateMap
-            {
-                Day = endDayDate,
-                Month = endMonthDate,
-                Year = endYearDate,
-                Time = new TimeMap
-                {
-                    Hours = 23,
-                    Minutes = 59,
-                    Seconds = 59
-                }
-            };*/
-
-
-            var startDate = body.StartDate;
-            var endDate = body.EndDate;
-
-            var request = new QueryRequest
+            var request = new ScanRequest
             {
                 TableName = "Sales",
-                IndexName = "SalesDate",
-                KeyConditionExpression = "SalesDate between :startDate and :endDate",
+                FilterExpression = "#salesDate.#year between :startYear and :endYear and #salesDate.#month between :startMonth and :endMonth and #salesDate.#day between :startDay and :endDay",
+                ExpressionAttributeNames = new Dictionary<string, string>
+                {
+                    {"#salesDate", "SalesDate"},
+                    {"#year", "Year"},
+                    {"#month", "Month"},
+                    {"#day", "Day"}
+                },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    {":startDate", new AttributeValue {S = startDate.ToString()}},
-                    {":endDate", new AttributeValue {S = endDate.ToString()}}
+                    {":startYear", new AttributeValue {N = startDate.Year.ToString()}},
+                    {":endYear", new AttributeValue {N = endDate.Year.ToString()}},
+                    {":startMonth", new AttributeValue {N = startDate.Month.ToString()}},
+                    {":endMonth", new AttributeValue {N = endDate.Month.ToString()}},
+                    {":startDay", new AttributeValue {N = startDate.Day.ToString()}},
+                    {":endDay", new AttributeValue {N = endDate.Day.ToString()}}
                 }
-
             };
 
-
-            var response = await _dynamoDBClient.QueryAsync(request);
+            var response = await _dynamoDBClient.ScanAsync(request);
             var sales = response.Items.Select(item => _dynamoDBContext.FromDocument<Sales>(Document.FromAttributeMap(item)));
             return Ok(sales);
         }
@@ -112,21 +88,26 @@ namespace SalesManager.Controllers
             var firstName = body.FirstName;
             var lastName = body.LastName;
 
-            var request = new QueryRequest
+            var request = new ScanRequest
             {
                 TableName = "Sales",
-                IndexName = "SalesPerson",
-                KeyConditionExpression = "SalesDate between :firstName and :lastName",
+                FilterExpression = "#SalesPerson.#FirstName = :firstName AND #SalesPerson.#LastName = :lastName",
+                ExpressionAttributeNames = new Dictionary<string, string>
+                {
+                    {"#SalesPerson", "SalesPerson"},
+                    {"#FirstName", "FirstName"},
+                    {"#LastName", "LastName"}
+                },
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    {":startDate", new AttributeValue {S = firstName.ToString()}},
-                    {":endDate", new AttributeValue {S = lastName.ToString()}}
+                    {":firstName", new AttributeValue {S = firstName}},
+                    {":lastName", new AttributeValue {S = lastName}}
                 }
 
             };
 
 
-            var response = await _dynamoDBClient.QueryAsync(request);
+            var response = await _dynamoDBClient.ScanAsync(request);
             var sales = response.Items.Select(item => _dynamoDBContext.FromDocument<Sales>(Document.FromAttributeMap(item)));
             return Ok(sales);
         }
